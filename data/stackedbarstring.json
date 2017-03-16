@@ -1,0 +1,4 @@
+[{"id":369,"type":135,"xval":"Template 1","yval1":5,"yval2":5,"yval3":5,"totalval":13,"ylabel1":"Collection 1","ylabel2":"Collection 2","ylabel3":"Collection 3","parentrefid":163,"parentreftype":101},
+{"id":370,"type":135,"xval":"Template 2","yval1":12,"yval2":8,"yval3":1,"totalval":21,"ylabel1":"Collection 1","ylabel2":"Collection 2","ylabel3":"Collection 3","parentrefid":163,"parentreftype":101},
+{"id":371,"type":135,"xval":"Template 3","yval1":25,"yval2":1,"yval3":10,"totalval":36,"ylabel1":"Collection 1","ylabel2":"Collection 2","ylabel3":"Collection 3","parentrefid":163,"parentreftype":101},
+{"id":372,"type":135,"xval":"Template 4","yval1":7,"yval2":9,"yval3":8,"totalval":24,"ylabel1":"Collection 1","ylabel2":"Collection 2","ylabel3":"Collection 3","parentrefid":163,"parentreftype":101}]
