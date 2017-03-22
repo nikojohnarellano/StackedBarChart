@@ -250,50 +250,61 @@ var StackedBarChart = function(param)
             /*.transition()
             .delay(function(d,i){return i*delayBetweenLayers;})
             .duration*/
-
-            .selectAll("rect")
-            .data(function(d){ return d;})
+          //for each layer
+          .each(function(d, layerIndex){
+            d3.select(this).selectAll("rect")
+            .data(function(d){console.log(d + " d before enter");return d; }) //d is layer array
             .enter().append("rect")
             /*disable pointer events for each rectangle entering the dom*/
-              .style("pointer-events", "none")
-              .on('mouseover',tooltip_mouseover)
-              .on('mousemove',tooltip_mousemove)
-              .on('mouseout',tooltip_mouseout)
-              //.transition()
-              //.delay(function(d, i) { return i * 500;})
-              .attr("x", function(d) { console.log(d.x);return that.xScale(d.x); })
-              .attr("y", that.h)
-              .attr("height", 0)
-              .attr("width", that.xScale.rangeBand() - 1)
-
-              // This delays the bars horizontally.
-              .transition()
-              .delay(function(d,i){
+            .style("pointer-events", "none")
+            .on('mouseover',tooltip_mouseover)
+            .on('mousemove',tooltip_mousemove)
+            .on('mouseout',tooltip_mouseout)
+            //.transition()
+            //.delay(function(d, i) { return i * 500;})
+            .attr("x", function(d) { /*console.log(d.x);*/return that.xScale(d.x); })
+            .attr("y", function(d,i) { return that.yScale(d.y + d.y0);})
+            //.attr("y", that.h)
+            .attr("height", 0)
+            .attr("width", that.xScale.rangeBand() - 1)
+            .transition()
+            /*the layer 0 should have no delay*/
+            /*delay between layers*/
+            .delay(function(d, i){
+              if(layerIndex === 0){
+                console.log(i * delayBetweenBars);
                 return i * delayBetweenBars;
+              }
+              console.log("d: " + d + "  i: " + i + " layerIndex: " + layerIndex);
+              console.log(delayBetweenLayers*layerIndex + delayBetweenBars*i + delayBetweenLayers);
+              return delayBetweenLayers*layerIndex + delayBetweenBars*i + delayBetweenLayers;
               })
               .duration(growBarsDuration/3)
               // Expand height first (bounce effect)
               .attr('y', function(d, i) { return that.yScale(d.y + d.y0) - 50; })
               .attr('height', function(d, i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) + 50 ;})
+              .ease("bounce")
               .transition()
               .duration(growBarsDuration/3)
               // Lower the height after (bounce effect)
               .attr('y', function(d,i) { return that.yScale(d.y + d.y0) - 15; })
               .attr('height', function(d,i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) + 15 ;})
+              .ease("bounce")
               .transition()
               .duration(growBarsDuration/3)
               // Turn back to original height
               .attr("y", function(d,i) { return that.yScale(d.y + d.y0);})
               .attr("height", function(d,i) { return that.yScale(d.y0) -that.yScale(d.y+d.y0);})
-
+              .ease("bounce")
               //allow pointer events after animation is finished
               .each("start", function(){
 
               })
               .each("end", function(){
                 d3.select(this).style("pointer-events", "");
-                //alert("finished")
-              })
+
+              });//end of transition
+            })//end of each layer
             ;
         },
 
