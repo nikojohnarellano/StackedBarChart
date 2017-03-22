@@ -238,8 +238,8 @@ var StackedBarChart = function(param)
 
           /*Create the Layers*/
 
-          var growBarDuration = 500;
-          var delayBetweenBars = 500;
+          var growBarDuration = 75 * that.layers.length; //based on the amount of layers
+          var delayBetweenBars = growBarDuration/data.length; //based the amount of bars
           console.log(that.layers);
           var layer = svg.selectAll(".layer")
             .data(that.layers)
@@ -264,44 +264,26 @@ var StackedBarChart = function(param)
             .attr("width", that.xScale.rangeBand() - 1)
             .transition()
             /*the layer 0 should have no delay*/
-            /*delay between layers*/
             .delay(function(d, i){
-              console.log("d: " + d + "  i: " + i + " layerIndex: " + layerIndex);
-              console.log(layer);
               var offset =0;
-              if(layerIndex!==0){
-                offset = delayBetweenBars ;
-                console.log(true);
-              }
-              console.log((growBarDuration*(that.layers.length)*layerIndex) + (delayBetweenBars*i) + offset);
-              return (growBarDuration*(that.layers.length)*layerIndex) + (delayBetweenBars*i) + offset;
+              if(layerIndex!==0)
+                offset = delayBetweenBars;
+              return (growBarDuration*that.layers.length*layerIndex) + (delayBetweenBars*i) + offset;
             })
-              //.duration(growBarDuration/3)
-              // Expand height first (bounce effect)
-              //.attr('y', function(d, i) { return that.yScale(d.y + d.y0) + 50; })
-              //.attr('height', function(d, i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) - 50 ;})
-              //.ease("bounce")
-              //.transition()
-              //.duration(growBarDuration/3)
-              // Lower the height after (bounce effect)
-              //.attr('y', function(d,i) { return that.yScale(d.y + d.y0) - 15; })
-              //.attr('height', function(d,i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) + 15 ;})
-              //.ease("bounce")
-              .transition()
-              .duration(growBarDuration)
-              // Turn back to original height
-              .attr("y", function(d,i) { return that.yScale(d.y + d.y0);})
-              .attr("height", function(d,i) { return that.yScale(d.y0) -that.yScale(d.y+d.y0);})
-              .ease("elastic-in")
-              //allow pointer events after animation is finished
-              .each("start", function(){
-
-              })
-              .each("end", function(){
-                d3.select(this).style("pointer-events", "");
-              });//end of transition
-            })//end of each layer
-            ;
+            .transition()
+            .duration(growBarDuration)
+            // Turn back to original height
+            .attr("y", function(d,i) { return that.yScale(d.y + d.y0);})
+            .attr("height", function(d,i) { return that.yScale(d.y0) -that.yScale(d.y+d.y0);})
+            .ease("elastic")
+            //.ease("bounce")
+            //.ease("back")
+            //allow pointer events after animation is finished
+            .each("end", function(){
+              d3.select(this).style("pointer-events", "");
+            });//end of transition
+          })//end of each layer
+          ;
         },
 
         /**
