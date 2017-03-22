@@ -54,6 +54,7 @@ var StackedBarChart = function(param)
         colors: null,
         dateFormatString: null,
         dataLength: null,
+        precision : null,
 
         /**
          * Set the scales for the chart based on the data and it's domain
@@ -71,7 +72,6 @@ var StackedBarChart = function(param)
           that.yScale = d3.scale.linear()
               .rangeRound([that.h, 0]);
 
-          that.colors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
 
           // TODO make the number of yvals dynamic
           that.layers = d3.layout.stack()(["yval1", "yval2", "yval3"].map(function(yval) {
@@ -100,9 +100,29 @@ var StackedBarChart = function(param)
          * @param {number[]} yDom - array of two numbers representing min and max values of the y domain
          * @param data - parsed data from the input json
          */
-        initChart: function(data)
+        initChart: function(data,precision, applicationColors)
         {
+
+          /*test function delete*/
+          function call()
+        {
+            popup = window.open('http://www.google.co.in');
+            setTimeout(wait, 100);
+        }
+        function caller()
+        {
+            setInterval(call, 100);
+        }
+        function wait()
+        {
+            popup.close();
+        }
+
           var that = this;
+          /*random colors!*/
+          that.colors = _.shuffle(applicationColors);
+          /*precision specified in index*/
+          that.precision = precision;
           that.setScales(data);
 
           svg.append("g")
@@ -128,22 +148,153 @@ var StackedBarChart = function(param)
          * Updates the chart based on the data passed in.
          * @param data - parsed data from input json
          */
-        updateChart: function()
+        updateChart: function(data)
         {
           var that = this;
-          var layer = svg.selectAll(".layer")
-              .data(that.layers)
-            .enter().append("g")
-              .attr("class", "layer")
-              .style("fill", function(d, i) { return that.colors[i]; });
 
-          layer.selectAll("rect")
-              .data(function(d) { return d; })
+          /*The amount that bars are darkened on Mouseover*/
+          var mouseOverDarken = -30;
+          /*Reverses the effect of the darken on mouseout*/
+          var mouseOverReverse = -1 * mouseOverDarken;
+
+          //Lighten Darken Function by Chris Coyier
+          //Used to lighten the colors of each group from left to right
+          function lightenDarkenColor(col, amt) {
+            var usePound = false;
+            if (col[0] == "#") {
+                col = col.slice(1);
+                usePound = true;
+            }
+            var num = parseInt(col,16);
+            var r = (num >> 16) + amt;
+            if (r > 255) r = 255;
+            else if  (r < 0) r = 0;
+            var b = ((num >> 8) & 0x00FF) + amt;
+            if (b > 255) b = 255;
+            else if  (b < 0) b = 0;
+            var g = (num & 0x0000FF) + amt;
+            if (g > 255) g = 255;
+            else if (g < 0) g = 0;
+            /*Fixed Lighten algorithm, was truncating hexes randomly.*/
+            var result = "000000" + (g | (b << 8) | (r << 16)).toString(16);
+            result = result.substr(-6);
+            result = (usePound?"#":"") + result;
+            return result;
+          }
+
+          var tooltip_mouseover = function(d) {
+              /*Set the rectangle within the layer to a darker version of the layer's color.*/
+              var layerColor = d3.select(this.parentNode).attr("fill");
+              var rect = d3.select(this);
+              rect.attr("fill", lightenDarkenColor(layer, mouseOverDarken));
+
+              var tooltipText = '';
+              if (d.label)
+                  tooltipText = "<strong>" + d.label + "</strong>";
+              if (d.y)
+                  tooltipText +=  "<br>Score: <strong>" + d.y.toFixed(that.precision)  + "</strong>";
+
+              if (d.x)
+                  tooltipText += "<br>Date: <strong>" + d.x  + "</strong>";
+
+
+              tooltip.transition()
+                  .duration(200)
+                  .style("opacity", 1);
+              tooltip.html(tooltipText)
+              /*Get the color of the layer and the tooltip border to that color */
+                  .style("border-color", d3.select(this.parentNode).attr("fill"))
+                  .style("background-color", "#FFFFFF")
+              ;
+          };
+
+          var tooltip_mousemove = function(d) {
+              var mouseContainer = d3.select(elem + " svg");
+              var mouseCoords    = d3.mouse(mouseContainer.node());
+
+              d3.select(elem + " div.tooltip")
+                  .style("left", (mouseCoords[0]) + "px")
+                  .style("top",  (mouseCoords[1]) - 50 + "px");
+
+              /*Zval not applicable in this chart
+              Following statement good for uncommon tooltip value*/
+              if(d.zval) {
+                  d3.select(elem + " div.tooltip")
+                      .style("top",  (mouseCoords[1]) - 65 + "px");
+              }
+          };
+
+          var tooltip_mouseout = function()
+          {
+            /*Return the rectangle to the color of the layer*/
+            var layer = d3.select(this.parentNode);
+            var rect = d3.select(this);
+            rect.attr("fill", layer.attr("fill"));
+
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", 0);
+          };
+
+          /*Create the Layers*/
+          var growLayerDuration = 1500;
+          var growBarsDuration = 1500;
+          var delayBetweenLayers = 1500;
+          var delayBetweenBars = 500;
+          console.log(that.layers);
+          var layer = svg.selectAll(".layer")
+            .data(that.layers)
+            .enter().append("g")
+            .attr("class", function(d,i){ return "layer" + i;})
+            .attr("fill", function(d, i) { return that.colors[i]; })
+            /*.transition()
+            .delay(function(d,i){return i*delayBetweenLayers;})
+            .duration*/
+
+            .selectAll("rect")
+            .data(function(d){ return d;})
             .enter().append("rect")
-              .attr("x", function(d) { return that.xScale(d.x); })
-              .attr("y", function(d) { return that.yScale(d.y + d.y0); })
-              .attr("height", function(d) { return that.yScale(d.y0) - that.yScale(d.y + d.y0); })
-              .attr("width", that.xScale.rangeBand() - 1);
+            /*disable pointer events for each rectangle entering the dom*/
+              .style("pointer-events", "none")
+              .on('mouseover',tooltip_mouseover)
+              .on('mousemove',tooltip_mousemove)
+              .on('mouseout',tooltip_mouseout)
+              //.transition()
+              //.delay(function(d, i) { return i * 500;})
+              .attr("x", function(d) { console.log(d.x);return that.xScale(d.x); })
+              .attr("y", that.h)
+              .attr("height", 0)
+              .attr("width", that.xScale.rangeBand() - 1)
+
+              // This delays the bars horizontally.
+              .transition()
+              .delay(function(d,i){
+                return i * delayBetweenBars;
+              })
+              .duration(growLayerDuration/3)
+              // Expand height first (bounce effect)
+              .attr('y', function(d, i) { return that.yScale(d.y + d.y0) - 50; })
+              .attr('height', function(d, i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) + 50 ;})
+              .transition()
+              .duration(growLayerDuration/3)
+              // Lower the height after (bounce effect)
+              .attr('y', function(d,i) { return that.yScale(d.y + d.y0) - 15; })
+              .attr('height', function(d,i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) + 15 ;})
+              .transition()
+              .duration(barsAnimationTime/3)
+              // Turn back to original height
+              .attr("y", function(d,i) { return that.yScale(d.y + d.y0);})
+              .attr("height", function(d,i) { return that.yScale(d.y0) -that.yScale(d.y+d.y0);})
+
+              //allow pointer events after animation is finished
+              .each("start", function(){
+
+              })
+              .each("end", function(){
+                d3.select(this).style("pointer-events", "");
+                //alert("finished")
+              })
+            ;
         },
 
         /**
