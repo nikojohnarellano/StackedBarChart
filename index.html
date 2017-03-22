@@ -44,11 +44,12 @@
         zAxisLabel: "Z Axis",
         tooltipTitle: "Tooltip"
     }
+    var precision =2;
 
     var stackedBarChart = new StackedBarChart(stackedBarParam);
 
     d3.json("data/stackedbardate.json", function(data) {
-        stackedBarChart.initChart(data);
+        stackedBarChart.initChart(data, precision, applicationColors);
         stackedBarChart.updateChart(data);
         /*
         groupedBarChart.initChart(groupedBarData, precision, applicationColors);
