@@ -103,21 +103,6 @@ var StackedBarChart = function(param)
         initChart: function(data,precision, applicationColors)
         {
 
-          /*test function delete*/
-          function call()
-        {
-            popup = window.open('http://www.google.co.in');
-            setTimeout(wait, 100);
-        }
-        function caller()
-        {
-            setInterval(call, 100);
-        }
-        function wait()
-        {
-            popup.close();
-        }
-
           var that = this;
           /*random colors!*/
           that.colors = _.shuffle(applicationColors);
@@ -237,20 +222,14 @@ var StackedBarChart = function(param)
           };
 
           /*Create the Layers*/
-          var growLayerDuration = 1500;
-          var growBarsDuration = 1500;
-          var delayBetweenLayers = 1500;
-          var delayBetweenBars = 500;
+          var barsAnimationTime = 1000;
+          var delayBetweenBars = 50;
           console.log(that.layers);
           var layer = svg.selectAll(".layer")
             .data(that.layers)
             .enter().append("g")
             .attr("class", function(d,i){ return "layer" + i;})
             .attr("fill", function(d, i) { return that.colors[i]; })
-            /*.transition()
-            .delay(function(d,i){return i*delayBetweenLayers;})
-            .duration*/
-
             .selectAll("rect")
             .data(function(d){ return d;})
             .enter().append("rect")
@@ -259,9 +238,8 @@ var StackedBarChart = function(param)
               .on('mouseover',tooltip_mouseover)
               .on('mousemove',tooltip_mousemove)
               .on('mouseout',tooltip_mouseout)
-              //.transition()
-              //.delay(function(d, i) { return i * 500;})
-              .attr("x", function(d) { console.log(d.x);return that.xScale(d.x); })
+
+              .attr("x", function(d) { return that.xScale(d.x); })
               .attr("y", that.h)
               .attr("height", 0)
               .attr("width", that.xScale.rangeBand() - 1)
@@ -271,28 +249,14 @@ var StackedBarChart = function(param)
               .delay(function(d,i){
                 return i * delayBetweenBars;
               })
-              .duration(growLayerDuration/3)
+              .duration(barsAnimationTime)
               // Expand height first (bounce effect)
-              .attr('y', function(d, i) { return that.yScale(d.y + d.y0) - 50; })
-              .attr('height', function(d, i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) + 50 ;})
-              .transition()
-              .duration(growLayerDuration/3)
-              // Lower the height after (bounce effect)
-              .attr('y', function(d,i) { return that.yScale(d.y + d.y0) - 15; })
-              .attr('height', function(d,i) { return that.yScale(d.y0) - that.yScale(d.y + d.y0) + 15 ;})
-              .transition()
-              .duration(barsAnimationTime/3)
-              // Turn back to original height
+              .ease("elastic")
               .attr("y", function(d,i) { return that.yScale(d.y + d.y0);})
               .attr("height", function(d,i) { return that.yScale(d.y0) -that.yScale(d.y+d.y0);})
-
               //allow pointer events after animation is finished
-              .each("start", function(){
-
-              })
               .each("end", function(){
                 d3.select(this).style("pointer-events", "");
-                //alert("finished")
               })
             ;
         },
