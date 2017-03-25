@@ -64,7 +64,8 @@ var StackedBarChart = function(param)
          */
         setScales: function(data)
         {
-          var that = this;
+          var that    = this;
+          var yvalues = [];
 
           that.xScale = d3.scale.ordinal()
               .rangeRoundBands([0, that.w], 0.3);
@@ -72,9 +73,10 @@ var StackedBarChart = function(param)
           that.yScale = d3.scale.linear()
               .rangeRound([that.h, 0]);
 
+          yvalues =  _.max(_.map(data, function(d) { return _.filter(_.keys(d), function(d) { return d.indexOf('yval') != -1; }); }), function(d) { return d.length; });
 
           // TODO make the number of yvals dynamic
-          that.layers = d3.layout.stack()(["yval1", "yval2", "yval3"].map(function(yval) {
+          that.layers = d3.layout.stack()(yvalues.map(function(yval) {
                 return data.map(function(d) {
                     return {x: d.xval, y: +d[yval]};
                 });
@@ -252,8 +254,8 @@ var StackedBarChart = function(param)
               .duration(barsAnimationTime)
               // Expand height first (bounce effect)
               .ease("elastic")
-              .attr("y", function(d,i) { return that.yScale(d.y + d.y0);})
-              .attr("height", function(d,i) { return that.yScale(d.y0) -that.yScale(d.y+d.y0);})
+              .attr("y", function(d,i) { return isNaN(d.y) ? 0 : that.yScale(d.y + d.y0); })
+              .attr("height", function(d,i) { return isNaN(d.y) ? 0 : that.yScale(d.y0) -that.yScale(d.y+d.y0);})
               //allow pointer events after animation is finished
               .each("end", function(){
                 d3.select(this).style("pointer-events", "");
