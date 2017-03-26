@@ -106,6 +106,9 @@ var StackedBarChart = function(param)
         {
 
           var that = this;
+
+          that.deleteChart();
+          
           /*random colors!*/
           that.colors = _.shuffle(applicationColors);
           /*precision specified in index*/
@@ -117,18 +120,17 @@ var StackedBarChart = function(param)
                     .call(that.yAxis);
 
           svg.append("g")
-                    .attr("class", "x axis")
+                    .attr("class", "x axis slanted")
                     .attr("transform", "translate(0," + that.h + ")")
                     .call(that.xAxis);
 
         },
 
-        /**
-         * Helper function. Deletes old bar elements after they are shrunk to zero (For animation pruposes, the bars are shrunk to zero instead of being instantly removed).
-         */
-        deleteGarbage: function()
-        {
-            d3.selectAll(".toBeDeleted").remove();
+        // Deletes the current chart, used for switching datasets
+        deleteChart: function(){
+            this.svg.selectAll('g').each(function () {
+                $(this).remove();
+            });
         },
 
         /**
