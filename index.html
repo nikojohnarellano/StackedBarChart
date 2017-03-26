@@ -44,9 +44,6 @@
         height: 500,
         elem: "#stackedBarChart",
         chartTitle: "Stacked Bar Chart",
-        xAxisLabel: "X Axis",
-        yAxisLabel: "Y Axis",
-        zAxisLabel: "Z Axis",
         tooltipTitle: "Tooltip"
     }
     var precision =2;
@@ -55,6 +52,9 @@
 
     function renderDateDataset() {
       d3.json("data/stackedbardate.json", function(data) {
+          stackedBarChart.xAxisLabel = "Date";
+          stackedBarChart.yAxisLabel = "Score";
+
           stackedBarChart.initChart(data, precision, applicationColors);
           stackedBarChart.updateChart(data);
       });
@@ -62,6 +62,9 @@
 
     function renderStringDataset() {
       d3.json("data/stackedbarstring.json", function(data) {
+        stackedBarChart.xAxisLabel = "String";
+        stackedBarChart.yAxisLabel = "Score";
+
           stackedBarChart.initChart(data, precision, applicationColors);
           stackedBarChart.updateChart(data);
       });
