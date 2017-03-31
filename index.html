@@ -12,7 +12,7 @@
     <SCRIPT src = "js/datetime-moment.js"></SCRIPT>
     <SCRIPT src = "js/app.js"></SCRIPT>
     <SCRIPT src = "js/StackedBar.js"></SCRIPT>
-    <link rel="stylesheet" type="text/css" href="css/barline.css">
+    <link rel="stylesheet" type="text/css" href="css/stackedbar.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link href='http://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
@@ -26,35 +26,53 @@
             </div>
         </div>
     </div>
-    <p class="clickUpdate"> Click to show dataset #1 <b>(breakdown by YM)</b></p>
-    <p class="clickUpdate2"> Click to show dataset #2 <b>(breakdown by YMD)</b></p>
-    <p class="clickUpdate3"> Click to show dataset #3 </p>
+    <button id="StringButton"> Dataset #1 (string) </button></p>
+    <button id="DateButton">Dataset #2 (date) </button></p>
 	<br>
 	<div id="clickInfo"></div>
 
     <script>
+    // On load use string dataset
+    window.onload = renderStringDataset;
+    // Set buttons
+    document.getElementById("StringButton").onclick = renderStringDataset;
+    document.getElementById("DateButton").onclick = renderDateDataset;
+
     var applicationColors = [ "#F5A623", "#00ADF3", "#00975E", "#AE53C0", "#FF7152", "#D22F43", "#50E3C2", "#FFD92F", "#A0E254", "#550000", "#E55F95", "#AA3939", "#304E0E", "#4745FF", "#6900C4" ];
     var stackedBarParam = {
         width: $("#stackedBarChart").width(),
         height: 500,
         elem: "#stackedBarChart",
         chartTitle: "Stacked Bar Chart",
-        xAxisLabel: "X Axis",
-        yAxisLabel: "Y Axis",
-        zAxisLabel: "Z Axis",
         tooltipTitle: "Tooltip"
     }
     var precision =2;
 
     var stackedBarChart = new StackedBarChart(stackedBarParam);
 
-    d3.json("data/stackedbardate.json", function(data) {
-        stackedBarChart.initChart(data, precision, applicationColors);
-        stackedBarChart.updateChart(data);
-        /*
-        groupedBarChart.initChart(groupedBarData, precision, applicationColors);
-        groupedBarChart.updateChart(groupedBarData);*/
-    });
+    function renderDateDataset() {
+      d3.json("data/stackedbardate.json", function(data) {
+          stackedBarChart.xAxisLabel = "Date";
+          stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+    }
+
+    function renderStringDataset() {
+      d3.json("data/stackedbarstring.json", function(data) {
+        stackedBarChart.xAxisLabel = "String";
+        stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+
+    }
+
+
+
 
     </script>
 

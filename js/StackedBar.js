@@ -22,7 +22,6 @@ var StackedBarChart = function(param)
     var chartTitle = param.chartTitle;
     var xAxisLabel = param.xAxisLabel;
     var yAxisLabel = param.yAxisLabel;
-    var zAxisLabel = param.zAxisLabel;
     var tooltipTitle = param.tooltipTitle;
     var margin = { top: 57, right: 57, bottom: 57, left: 57 };
 
@@ -47,8 +46,8 @@ var StackedBarChart = function(param)
         xAxis: null,
         yScale: null,
         yAxis: null,
-        zScale: null,
-        zAxis: null,
+        xAxisLabel : null,
+        yAxisLabel : null,
         addLine: null,
         layers: null,
         colors: null,
@@ -106,6 +105,9 @@ var StackedBarChart = function(param)
         {
 
           var that = this;
+
+          that.deleteChart();
+
           /*random colors!*/
           that.colors = _.shuffle(applicationColors);
           /*precision specified in index*/
@@ -117,18 +119,17 @@ var StackedBarChart = function(param)
                     .call(that.yAxis);
 
           svg.append("g")
-                    .attr("class", "x axis")
+                    .attr("class", "x axis slanted")
                     .attr("transform", "translate(0," + that.h + ")")
                     .call(that.xAxis);
 
         },
 
-        /**
-         * Helper function. Deletes old bar elements after they are shrunk to zero (For animation pruposes, the bars are shrunk to zero instead of being instantly removed).
-         */
-        deleteGarbage: function()
-        {
-            d3.selectAll(".toBeDeleted").remove();
+        // Deletes the current chart, used for switching datasets
+        deleteChart: function(){
+            this.svg.selectAll('g').each(function () {
+                $(this).remove();
+            });
         },
 
         /**
@@ -177,12 +178,12 @@ var StackedBarChart = function(param)
 
               var tooltipText = '';
               if (d.label)
-                  tooltipText = "<strong>" + d.label + "</strong>";
+                  tooltipText = "<strong>" + d.label + "</strong><br/>";
               if (d.y)
-                  tooltipText +=  "<br>Score: <strong>" + d.y.toFixed(that.precision)  + "</strong>";
+                  tooltipText +=  that.yAxisLabel + ": <strong>" + d.y.toFixed(that.precision)  + "</strong><br/>";
 
               if (d.x)
-                  tooltipText += "<br>Date: <strong>" + d.x  + "</strong>";
+                  tooltipText +=  that.xAxisLabel + ": <strong>" + d.x  + "</strong>";
 
 
               tooltip.transition()
@@ -283,18 +284,6 @@ var StackedBarChart = function(param)
         {
             var dateFormat = "MMM-DD-YYYY";
             return moment(date, dateFormat, false);
-        },
-
-        /**
-         * Does some processing for json data. Groups year-months together or year-month-days together.
-         * Takes the aggregate z-axis values and average y-axis values for each group.
-         * @param data - parsed data from input json
-         * @returns processed data
-         */
-
-        setStackedBarChartData : function(data)
-        {
-              var that = this;
         }
     };
 };
