@@ -74,10 +74,13 @@ var StackedBarChart = function(param)
 
           yvalues =  _.max(_.map(data, function(d) { return _.filter(_.keys(d), function(d) { return d.indexOf('yval') != -1; }); }), function(d) { return d.length; });
 
-          // TODO make the number of yvals dynamic
           that.layers = d3.layout.stack()(yvalues.map(function(yval) {
+                // The format of yvals will always have numbers in them
+                var num       = yval.match(/\d+/)[0];
+                var ylabelKey = "ylabel" + num;
+
                 return data.map(function(d) {
-                    return {x: d.xval, y: +d[yval]};
+                    return {x: d.xval, y: +d[yval], label : d[ylabelKey]};
                 });
           }));
 
@@ -181,10 +184,6 @@ var StackedBarChart = function(param)
                   tooltipText = "<strong>" + d.label + "</strong><br/>";
               if (d.y)
                   tooltipText +=  that.yAxisLabel + ": <strong>" + d.y.toFixed(that.precision)  + "</strong><br/>";
-
-              if (d.x)
-                  tooltipText +=  that.xAxisLabel + ": <strong>" + d.x  + "</strong>";
-
 
               tooltip.transition()
                   .duration(200)
