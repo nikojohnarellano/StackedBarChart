@@ -125,7 +125,7 @@
 
     }
     function renderAggDateDataset() {
-      d3.json("data/negativestackedbardate.json", function(data) {
+      d3.json("data/aggregatestackedbardate.json", function(data) {
           stackedBarChart.xAxisLabel = "Date";
           stackedBarChart.yAxisLabel = "Score";
 
@@ -135,7 +135,7 @@
     }
 
     function renderAggStringDataset() {
-      d3.json("data/negativestackedbarstring.json", function(data) {
+      d3.json("data/aggregatestackedbarstring.json", function(data) {
         stackedBarChart.xAxisLabel = "String";
         stackedBarChart.yAxisLabel = "Score";
 
