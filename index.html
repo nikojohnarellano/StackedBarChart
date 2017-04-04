@@ -2,10 +2,9 @@
 <meta charset="utf-8">
 <head>
     <TITLE>Stacked Bar Chart</TITLE>
-    <SCRIPT src = "http://d3js.org/d3.v3.min.js"></SCRIPT>
+    <SCRIPT src = "js/d3.min.js"></SCRIPT>
     <SCRIPT src = "js/jquery-2.2.1.min.js"></SCRIPT>
     <SCRIPT src = "js/jquery-ui-1.11.4.min.js"></SCRIPT>
-    <SCRIPT src = "http://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></SCRIPT>
     <SCRIPT src = "js/underscore-min.js"></SCRIPT>
     <SCRIPT src = "js/moment.min.js"></SCRIPT>
     <SCRIPT src = "js/datetime.js"></SCRIPT>
@@ -15,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="css/stackedbar.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
-    <link href='http://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
+
 </head>
 <body>
     <div class="panel-body" >
@@ -28,6 +27,13 @@
     </div>
     <button id="StringButton"> Dataset #1 (string) </button></p>
     <button id="DateButton">Dataset #2 (date) </button></p>
+    <button id="XDateButton">Extreme Values (date)</button></p>
+    <button id="XStringButton">Extreme Values (string)</button></p>
+    <button id="NegDateButton">Negative Values (date) </button></p>
+    <button id="NegStringButton">Negative Values (string) </button></p>
+    <button id="aggDateButton">Aggregate Values (date) </button></p>
+    <button id="aggStringButton">Aggregate Values (string) </button></p>
+
 	<br>
 	<div id="clickInfo"></div>
 
@@ -37,6 +43,12 @@
     // Set buttons
     document.getElementById("StringButton").onclick = renderStringDataset;
     document.getElementById("DateButton").onclick = renderDateDataset;
+    document.getElementById("XDateButton").onclick = renderXDateDataset;
+    document.getElementById("XStringButton").onclick = renderXStringDataset;
+    document.getElementById("NegDateButton").onclick = renderNegDateDataset;
+    document.getElementById("NegStringButton").onclick = renderNegStringDataset;
+    document.getElementById("aggDateButton").onclick = renderAggDateDataset;
+    document.getElementById("aggStringButton").onclick = renderAggStringDataset;
 
     var applicationColors = [ "#F5A623", "#00ADF3", "#00975E", "#AE53C0", "#FF7152", "#D22F43", "#50E3C2", "#FFD92F", "#A0E254", "#550000", "#E55F95", "#AA3939", "#304E0E", "#4745FF", "#6900C4" ];
     var stackedBarParam = {
@@ -62,6 +74,68 @@
 
     function renderStringDataset() {
       d3.json("data/stackedbarstring.json", function(data) {
+        stackedBarChart.xAxisLabel = "String";
+        stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+
+    }
+
+    function renderXDateDataset() {
+      d3.json("data/extremestackedbardate.json", function(data) {
+          stackedBarChart.xAxisLabel = "Date";
+          stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+    }
+
+    function renderXStringDataset() {
+      d3.json("data/extremestackedbarstring.json", function(data) {
+        stackedBarChart.xAxisLabel = "String";
+        stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+
+    }
+
+    function renderNegDateDataset() {
+      d3.json("data/negativestackedbardate.json", function(data) {
+          stackedBarChart.xAxisLabel = "Date";
+          stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+    }
+
+    function renderNegStringDataset() {
+      d3.json("data/negativestackedbarstring.json", function(data) {
+        stackedBarChart.xAxisLabel = "String";
+        stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+
+    }
+    function renderAggDateDataset() {
+      d3.json("data/negativestackedbardate.json", function(data) {
+          stackedBarChart.xAxisLabel = "Date";
+          stackedBarChart.yAxisLabel = "Score";
+
+          stackedBarChart.initChart(data, precision, applicationColors);
+          stackedBarChart.updateChart(data);
+      });
+    }
+
+    function renderAggStringDataset() {
+      d3.json("data/negativestackedbarstring.json", function(data) {
         stackedBarChart.xAxisLabel = "String";
         stackedBarChart.yAxisLabel = "Score";
 
