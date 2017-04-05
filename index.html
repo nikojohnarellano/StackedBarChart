@@ -20,8 +20,22 @@
 <body>
     <div class="panel-body" >
         <div class="row">
-            <div class="col-md-12">
-                <div id="stackedBarChart" class="stackedBarChart">
+            <div class="col-md-6">
+                <div id="stackedBarChart1" class="stackedBarChart">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="stackedBarChart2" class="stackedBarChart">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="stackedBarChart3" class="stackedBarChart">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="stackedBarChart4" class="stackedBarChart">
                 </div>
             </div>
         </div>
@@ -32,41 +46,107 @@
 	<div id="clickInfo"></div>
 
     <script>
+
     // On load use string dataset
     window.onload = renderStringDataset;
     // Set buttons
     document.getElementById("StringButton").onclick = renderStringDataset;
     document.getElementById("DateButton").onclick = renderDateDataset;
+    
 
     var applicationColors = [ "#F5A623", "#00ADF3", "#00975E", "#AE53C0", "#FF7152", "#D22F43", "#50E3C2", "#FFD92F", "#A0E254", "#550000", "#E55F95", "#AA3939", "#304E0E", "#4745FF", "#6900C4" ];
-    var stackedBarParam = {
-        width: $("#stackedBarChart").width(),
+    var precision = 2;
+
+    var stackedBarParam1 = {
+        width: $("#stackedBarChart1").width(),
         height: 500,
-        elem: "#stackedBarChart",
+        elem: "#stackedBarChart1",
         chartTitle: "Stacked Bar Chart",
         tooltipTitle: "Tooltip"
     }
-    var precision =2;
 
-    var stackedBarChart = new StackedBarChart(stackedBarParam);
+    var stackedBarParam2 = {
+        width: $("#stackedBarChart2").width(),
+        height: 500,
+        elem: "#stackedBarChart2",
+        chartTitle: "Stacked Bar Chart",
+        tooltipTitle: "Tooltip"
+    }
+
+    var stackedBarParam3 = {
+        width: $("#stackedBarChart3").width(),
+        height: 500,
+        elem: "#stackedBarChart3",
+        chartTitle: "Stacked Bar Chart",
+        tooltipTitle: "Tooltip"
+    }
+
+    var stackedBarParam4 = {
+        width: $("#stackedBarChart4").width(),
+        height: 500,
+        elem: "#stackedBarChart4",
+        chartTitle: "Stacked Bar Chart",
+        tooltipTitle: "Tooltip"
+    }
+
+    var stackedBarChart1 = new StackedBarChart(stackedBarParam1);
+    var stackedBarChart2 = new StackedBarChart(stackedBarParam2);
+    var stackedBarChart3 = new StackedBarChart(stackedBarParam3);
+    var stackedBarChart4 = new StackedBarChart(stackedBarParam4);
 
     function renderDateDataset() {
       d3.json("data/stackedbardate.json", function(data) {
-          stackedBarChart.xAxisLabel = "Date";
-          stackedBarChart.yAxisLabel = "Score";
+          stackedBarChart1.xAxisLabel = "Date";
+          stackedBarChart1.yAxisLabel = "Score";
 
-          stackedBarChart.initChart(data, precision, applicationColors);
-          stackedBarChart.updateChart(data);
+          stackedBarChart2.xAxisLabel = "Date";
+          stackedBarChart2.yAxisLabel = "Score";
+
+          stackedBarChart3.xAxisLabel = "Date";
+          stackedBarChart3.yAxisLabel = "Score";
+
+          stackedBarChart4.xAxisLabel = "Date";
+          stackedBarChart4.yAxisLabel = "Score";
+
+          stackedBarChart1.initChart(data, precision, applicationColors);
+          stackedBarChart1.updateChart(data);
+
+          stackedBarChart2.initChart(data, precision, applicationColors);
+          stackedBarChart2.updateChart(data);
+
+          stackedBarChart3.initChart(data, precision, applicationColors);
+          stackedBarChart3.updateChart(data);
+
+          stackedBarChart4.initChart(data, precision, applicationColors);
+          stackedBarChart4.updateChart(data);
       });
     }
 
     function renderStringDataset() {
       d3.json("data/stackedbarstring.json", function(data) {
-        stackedBarChart.xAxisLabel = "String";
-        stackedBarChart.yAxisLabel = "Score";
+        stackedBarChart1.xAxisLabel = "String";
+        stackedBarChart1.yAxisLabel = "Score";
 
-          stackedBarChart.initChart(data, precision, applicationColors);
-          stackedBarChart.updateChart(data);
+        stackedBarChart2.xAxisLabel = "String";
+        stackedBarChart2.yAxisLabel = "Score";
+
+        stackedBarChart3.xAxisLabel = "String";
+        stackedBarChart3.yAxisLabel = "Score";
+
+        stackedBarChart4.xAxisLabel = "String";
+        stackedBarChart4.yAxisLabel = "Score";
+
+        stackedBarChart1.initChart(data, precision, applicationColors);
+        stackedBarChart1.updateChart(data);
+
+        stackedBarChart2.initChart(data, precision, applicationColors);
+        stackedBarChart2.updateChart(data);
+
+        stackedBarChart3.initChart(data, precision, applicationColors);
+        stackedBarChart3.updateChart(data);
+
+        stackedBarChart4.initChart(data, precision, applicationColors);
+        stackedBarChart4.updateChart(data);
       });
 
     }
